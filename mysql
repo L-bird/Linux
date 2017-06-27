@@ -1,0 +1,31 @@
+#/bin/bash
+#mysql.sh
+read -p "是否安装数据库" D
+    if [ $D = y -o $D = Y ];then
+rpm -q mysql-server &>/dev/null  && rpm -e mysql-server  --nodeps &>/dev/null
+yum -y install ncurses-devel &>/dev/null
+tar -xf  cmake-2.8.6.tar.gz -C /usr/src
+tar -xf mysql-5.5.22.tar.gz -C /usr/src
+cd /usr/src/cmake-2.8.6/
+echo "Wait....."
+./configure &>/dev/null && gmake &>/dev/null  && gmake install &>/dev/null
+echo "安装mysql中....."
+cd /usr/src/mysql-5.5.22/
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DSYSCONFDIR=/etc -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=all  &>/dev/null && make &>/dev/null  && make install &>/dev/null
+useradd -M -s /sbin/nologin mysql
+chown -R mysql:root /usr/local/mysql
+/bin/cp support-files/my-medium.cnf /etc/my.cnf
+/bin/cp support-files/mysql.server /etc/init.d/mysqld
+chmod +x /etc/init.d/mysqld
+chkconfig --add mysqld
+echo "PATH=$PATH:/usr/local/mysql/bin/" >>/etc/profile 
+. /etc/profile &&>/dev/null
+#执行mysql——install_db脚本初始化数据库
+/usr/local/mysql/scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data/ &>/dev/null
+echo "mysql安装完成请启动服务（service mysqld start）"
+exit 0
+    else
+echo "退出BYE"
+exit 0
+fi
+exit 0
