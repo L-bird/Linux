@@ -19,7 +19,7 @@ chown -R mysql:root /usr/local/mysql
 chmod +x /etc/init.d/mysqld
 chkconfig --add mysqld
 echo "PATH=$PATH:/usr/local/mysql/bin/" >>/etc/profile 
-. /etc/profile &&>/dev/null
+source /etc/profile &&>/dev/null
 #执行mysql——install_db脚本初始化数据库
 /usr/local/mysql/scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data/ &>/dev/null
 echo "mysql安装完成请启动服务（service mysqld start）"
